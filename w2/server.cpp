@@ -73,39 +73,25 @@ public:
                     break;
                 case ENET_EVENT_TYPE_RECEIVE:
                     println("from", event.peer->address, "recieved", event.packet->data);
-
+                    
                     if (players.contains(event.peer->address)) {
                         players[event.peer->address].UpdateFromString(reinterpret_cast<const char*>(event.packet->data));
-                        players[event.peer->address].ping = event.peer->pingInterval;
+                        players[event.peer->address].ping = event.peer->roundTripTime;
                         
                         if (!updatedAddr.contains(event.peer->address)) updatedAddr[event.peer->address] = false;
                     }
+
                     break;
                 default:
                     break;
             };
-
-            
         }
 
-        auto reliableUpdate    = std::string("u");
         auto nonReliableUpdate = std::string("u");
 
         for (auto [address, reliable] : updatedAddr) {
-            if (reliable) {
-                reliableUpdate += " ";
-                reliableUpdate += players[address].String("-");
-            } else {
-                nonReliableUpdate += " ";
-                nonReliableUpdate += players[address].String("-");
-            }
-        }
-
-        if (reliableUpdate.length() > 1) {
-            for (size_t i = 0; i < players.size(); i++) {
-                ENetPacket* packet = enet_packet_create(reliableUpdate.c_str(), reliableUpdate.size() + 1, ENET_PACKET_FLAG_RELIABLE);
-                enet_peer_send(&(server->peers[i]), 0, packet);
-            }
+            nonReliableUpdate += " ";
+            nonReliableUpdate += players[address].String("-");
         }
         
         if (nonReliableUpdate.length() > 1) {
@@ -114,6 +100,8 @@ public:
                 enet_peer_send(&(server->peers[i]), 0, packet);
             }
         }
+
+        
     }
 };
 

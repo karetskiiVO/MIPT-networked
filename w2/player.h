@@ -8,7 +8,7 @@ struct Player {
     unsigned ping;
 
     void UpdateFromString (const std::string& str) {
-        sscanf(str.c_str(), "%g %g", x, y);
+        sscanf(str.c_str(), "%g %g", &x, &y);
     }
 
     std::string String (const std::string& sep = " ") const {
