@@ -18,7 +18,7 @@ set(W4_SERVER_SOURCES
     protocol.cpp
     )
 
-
+include_directories("../3rdParty/raylib/src")
 include_directories("../3rdParty/enet/include")
 
 if(MSVC)
