@@ -8,35 +8,27 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 SET(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-set(W5_SOURCES
-    main.cpp
-    protocol.cpp
-    )
+set(CLIENT_SOURCES main.cpp protocol.cpp entity.cpp )
+set(SERVER_SOURCES server.cpp protocol.cpp entity.cpp )
 
-set(W5_SERVER_SOURCES
-    server.cpp
-    protocol.cpp
-    entity.cpp
-    )
-
-
+include_directories("../3rdParty/raylib/src")
 include_directories("../3rdParty/enet/include")
 
 if(MSVC)
-  # https://github.com/raysan5/raylib/issues/857
-  add_compile_definitions(NOVIRTUALKEYCODES NOWINMESSAGES NOWINSTYLES NOSYSMETRICS NOMENUS NOICONS NOKEYSTATES NOSYSCOMMANDS NORASTEROPS NOSHOWWINDOW OEMRESOURCE NOATOM NOCLIPBOARD NOCOLOR NOCTLMGR NODRAWTEXT NOGDI NOKERNEL NOUSER NOMB NOMEMMGR NOMETAFILE NOMINMAX NOMSG NOOPENFILE NOSCROLL NOSERVICE NOSOUND NOTEXTMETRIC NOWH NOWINOFFSETS NOCOMM NOKANJI NOHELP NOPROFILER NODEFERWINDOWPOS NOMCX)
+    # https://github.com/raysan5/raylib/issues/857
+    add_compile_definitions(NOVIRTUALKEYCODES NOWINMESSAGES NOWINSTYLES NOSYSMETRICS NOMENUS NOICONS NOKEYSTATES NOSYSCOMMANDS NORASTEROPS NOSHOWWINDOW OEMRESOURCE NOATOM NOCLIPBOARD NOCOLOR NOCTLMGR NODRAWTEXT NOGDI NOKERNEL NOUSER NOMB NOMEMMGR NOMETAFILE NOMINMAX NOMSG NOOPENFILE NOSCROLL NOSERVICE NOSOUND NOTEXTMETRIC NOWH NOWINOFFSETS NOCOMM NOKANJI NOHELP NOPROFILER NODEFERWINDOWPOS NOMCX)
 endif()
 
-add_executable(w5 ${W5_SOURCES})
-target_link_libraries(w5 PUBLIC project_options project_warnings)
-target_link_libraries(w5 PUBLIC raylib enet)
+add_executable(client ${CLIENT_SOURCES})
+target_link_libraries(client PUBLIC project_options project_warnings)
+target_link_libraries(client PUBLIC raylib enet)
 
-add_executable(w5_server ${W5_SERVER_SOURCES})
-target_link_libraries(w5_server PUBLIC project_options project_warnings)
-target_link_libraries(w5_server PUBLIC enet)
+add_executable(server ${SERVER_SOURCES})
+target_link_libraries(server PUBLIC project_options project_warnings)
+target_link_libraries(server PUBLIC enet)
 
 if(MSVC)
-  target_link_libraries(w5 PUBLIC ws2_32.lib winmm.lib)
-  target_link_libraries(w5_server PUBLIC ws2_32.lib winmm.lib)
+    target_link_libraries(client PUBLIC ws2_32.lib winmm.lib)
+    target_link_libraries(server PUBLIC ws2_32.lib winmm.lib)
 endif()
 
