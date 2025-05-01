@@ -1,32 +1,37 @@
 #pragma once
 #include "mathUtils.h"
+#include <inttypes.h>
 #include <limits>
 
-template<typename T>
-T pack_float(float v, float lo, float hi, int num_bits)
-{
-  T range = (1 << num_bits) - 1;//std::numeric_limits<T>::max();
-  return range * ((clamp(v, lo, hi) - lo) / (hi - lo));
+template <typename PackedType>
+PackedType packFloat (float val, float min, float max, uint8_t bits) {
+    PackedType range = (1 << bits) - 1;
+    return range * ((clamp(val, min, max) - min) / (max - min));
 }
 
-template<typename T>
-float unpack_float(T c, float lo, float hi, int num_bits)
-{
-  T range = (1 << num_bits) - 1;//std::numeric_limits<T>::max();
-  return float(c) / range * (hi - lo) + lo;
+template <typename PackedType>
+float unpackFloat (PackedType packed, float min, float max, uint8_t bits) {
+    PackedType range = (1 << bits) - 1;
+    return float(packed) / range * (max - min) + min;
 }
 
-template<typename T, int num_bits>
-struct PackedFloat
-{
-  T packedVal;
+template <typename PackedType, uint8_t bits>
+struct PackedFloat {
+    PackedType packedVal;
 
-  PackedFloat(float v, float lo, float hi) { pack(v, lo, hi); }
-  PackedFloat(T compressed_val) : packedVal(compressed_val) {}
+    PackedFloat (float val, float min, float max) {
+        pack(val, min, max);
+    }
 
-  void pack(float v, float lo, float hi) { packedVal = pack_float<T>(v, lo, hi, num_bits); }
-  float unpack(float lo, float hi) { return unpack_float<T>(packedVal, lo, hi, num_bits); }
+    PackedFloat(PackedType compressed_val) : packedVal(compressed_val) {}
+
+    void pack (float val, float min, float max) { 
+        packedVal = packFloat<PackedType>(val, min, max, bits);
+    }
+
+    float unpack (float min, float max) {
+        return unpackFloat<PackedType>(packedVal, min, max, bits);
+    }
 };
 
-typedef PackedFloat<uint8_t, 4> float4bitsQuantized;
-
+using float4bitsQuantized = PackedFloat<uint8_t, 4>;

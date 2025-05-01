@@ -11,6 +11,7 @@ SET(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(W7_SOURCES
     main.cpp
     protocol.cpp
+    entity.cpp
     )
 
 set(W7_SERVER_SOURCES
@@ -28,11 +29,10 @@ if(MSVC)
 endif()
 
 add_executable(w7 ${W7_SOURCES})
-target_link_libraries(w7 PUBLIC project_options project_warnings)
 target_link_libraries(w7 PUBLIC raylib enet)
 
 add_executable(w7_server ${W7_SERVER_SOURCES})
-target_link_libraries(w7_server PUBLIC project_options project_warnings)
+# target_link_libraries(w7_server PUBLIC project_options project_warnings)
 target_link_libraries(w7_server PUBLIC enet)
 
 if(MSVC)
